@@ -13,14 +13,14 @@ jobs:
       - name: Descargar codigo de GitHub
         uses: actions/checkout@v4
 
-      - name: Crear estructura de archivo WAR
+      - name: Crear ROOT.war
         run: |
           cd SistemaCalificaciones
-          zip -r ../app.war * .[^.]*
+          jar -cvf ../ROOT.war *
 
-      - name: Desplegar WAR en Azure Web App
+      - name: Desplegar en Azure
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'calificaciones-paginita'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: 'app.war'
+          package: 'ROOT.war'
