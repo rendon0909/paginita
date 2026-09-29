@@ -13,12 +13,23 @@ jobs:
       - name: Descargar codigo de GitHub
         uses: actions/checkout@v4
 
-      - name: Crear ROOT.war
+      - name: Empaquetar web app en ROOT.war
         run: |
-          cd SistemaCalificaciones
-          jar -cvf ../ROOT.war *
+          # Si los archivos jsp/html estan dentro de una subcarpeta como 'web' o 'WebContent', 
+          # entra a ella; de lo contrario usa SistemaCalificaciones directamente.
+          if [ -d "SistemaCalificaciones/web" ]; then
+            cd SistemaCalificaciones/web
+          elif [ -d "SistemaCalificaciones/WebContent" ]; then
+            cd SistemaCalificaciones/WebContent
+          elif [ -d "SistemaCalificaciones/src/main/webapp" ]; then
+            cd SistemaCalificaciones/src/main/webapp
+          else
+            cd SistemaCalificaciones
+          fi
+          
+          jar -cvf ../../ROOT.war * || jar -cvf ../ROOT.war *
 
-      - name: Desplegar en Azure
+      - name: Desplegar en Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'calificaciones-paginita'
